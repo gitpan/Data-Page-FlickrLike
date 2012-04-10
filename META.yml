@@ -31,4 +31,4 @@ resources:
     type: git
     url: git://github.com/sekimura/data-page-flickrlike.git
     web: https://github.com/sekimura/data-page-flickrlike/tree
-version: 2.02
+version: 2.03
