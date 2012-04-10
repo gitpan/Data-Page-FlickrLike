@@ -1,21 +1,23 @@
 #line 1
 package YAML::Dumper;
-use strict; use warnings;
-use YAML::Base;
-use base 'YAML::Dumper::Base';
+use YAML::Mo;
+extends 'YAML::Dumper::Base';
 
+our $VERSION = '0.80';
+
+use YAML::Dumper::Base;
 use YAML::Node;
 use YAML::Types;
 
 # Context constants
-use constant KEY => 3;
-use constant BLESSED => 4;
+use constant KEY       => 3;
+use constant BLESSED   => 4;
 use constant FROMARRAY => 5;
-use constant VALUE => "\x07YAML\x07VALUE\x07";
+use constant VALUE     => "\x07YAML\x07VALUE\x07";
 
 # Common YAML character sets
 my $ESCAPE_CHAR = '[\\x00-\\x08\\x0b-\\x0d\\x0e-\\x1f]';
-my $LIT_CHAR = '|';    
+my $LIT_CHAR    = '|';    
 
 #==============================================================================
 # OO version of Dump. YAML->new->dump($foo); 
@@ -556,4 +558,4 @@ sub escape {
 
 __END__
 
-#line 587
+#line 589

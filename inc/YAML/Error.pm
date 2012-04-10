@@ -1,13 +1,14 @@
 #line 1
 package YAML::Error;
-use strict; use warnings;
-use YAML::Base; use base 'YAML::Base';
+use YAML::Mo;
 
-field 'code';
-field 'type' => 'Error';
-field 'line';
-field 'document';
-field 'arguments' => [];
+our $VERSION = '0.80';
+
+has 'code';
+has 'type' => default => sub {'Error'};
+has 'line';
+has 'document';
+has 'arguments' => default => sub {[]};
 
 my ($error_messages, %line_adjust);
 
@@ -186,10 +187,11 @@ YAML_LOAD_WARN_GLOB_IO
     );
 
 package YAML::Warning;
-use base 'YAML::Error';
+
+our @ISA = 'YAML::Error';
 
 1;
 
 __END__
 
-#line 220
+#line 222

@@ -1,20 +1,23 @@
 #line 1
 package YAML::Loader;
-use strict; use warnings;
-use YAML::Base;
-use base 'YAML::Loader::Base';
+use YAML::Mo;
+extends 'YAML::Loader::Base';
+
+our $VERSION = '0.80';
+
+use YAML::Loader::Base;
 use YAML::Types;
 
 # Context constants
-use constant LEAF => 1;
+use constant LEAF       => 1;
 use constant COLLECTION => 2;
-use constant VALUE => "\x07YAML\x07VALUE\x07";
-use constant COMMENT => "\x07YAML\x07COMMENT\x07";
+use constant VALUE      => "\x07YAML\x07VALUE\x07";
+use constant COMMENT    => "\x07YAML\x07COMMENT\x07";
 
 # Common YAML character sets
 my $ESCAPE_CHAR = '[\\x00-\\x08\\x0b-\\x0d\\x0e-\\x1f]';
-my $FOLD_CHAR = '>';
-my $LIT_CHAR = '|';    
+my $FOLD_CHAR   = '>';
+my $LIT_CHAR    = '|';    
 my $LIT_CHAR_RX = "\\$LIT_CHAR";    
 
 sub load {
@@ -728,11 +731,16 @@ sub _parse_next_line {
 #==============================================================================
 
 # Printable characters for escapes
-my %unescapes = 
-  (
-   0 => "\x00", a => "\x07", t => "\x09",
-   n => "\x0a", v => "\x0b", f => "\x0c",
-   r => "\x0d", e => "\x1b", '\\' => '\\',
+my %unescapes = (
+   0 => "\x00",
+   a => "\x07",
+   t => "\x09",
+   n => "\x0a",
+   'v' => "\x0b", # Potential v-string error on 5.6.2 if not quoted
+   f => "\x0c",
+   r => "\x0d",
+   e => "\x1b",
+   '\\' => '\\',
   );
    
 # Transform all the backslash style escape characters to their literal meaning
@@ -748,4 +756,4 @@ sub _unescape {
 
 __END__
 
-#line 780
+#line 788

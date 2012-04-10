@@ -1,6 +1,9 @@
 #line 1
+use strict;
+use warnings;
 package YAML::Tag;
-use strict; use warnings;
+
+our $VERSION = '0.80';
 
 use overload '""' => sub { ${$_[0]} };
 
@@ -21,4 +24,4 @@ sub canonical {
 
 __END__
 
-#line 48
+#line 51

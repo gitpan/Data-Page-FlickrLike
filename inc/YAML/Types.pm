@@ -1,18 +1,21 @@
 #line 1
 package YAML::Types;
-use strict; use warnings;
-use YAML::Base; use base 'YAML::Base';
+use YAML::Mo;
+
+our $VERSION = '0.80';
+
 use YAML::Node;
 
 # XXX These classes and their APIs could still use some refactoring,
 # but at least they work for now.
 #-------------------------------------------------------------------------------
 package YAML::Type::blessed;
-use YAML::Base; # XXX
+use YAML::Mo; # XXX
+
 sub yaml_dump {
     my $self = shift;
     my ($value) = @_;
-    my ($class, $type) = YAML::Base->node_info($value);
+    my ($class, $type) = YAML::Mo::Object->node_info($value);
     no strict 'refs';
     my $kind = lc($type) . ':';
     my $tag = ${$class . '::ClassTag'} ||
@@ -32,6 +35,7 @@ sub yaml_dump {
 
 #-------------------------------------------------------------------------------
 package YAML::Type::undef;
+
 sub yaml_dump {
     my $self = shift;
 }
@@ -42,6 +46,7 @@ sub yaml_load {
 
 #-------------------------------------------------------------------------------
 package YAML::Type::glob;
+
 sub yaml_dump {
     my $self = shift;
     my $ynode = YAML::Node->new({}, '!perl/glob:');
@@ -110,13 +115,15 @@ sub yaml_load {
 
 #-------------------------------------------------------------------------------
 package YAML::Type::code;
+
 my $dummy_warned = 0; 
 my $default = '{ "DUMMY" }';
+
 sub yaml_dump {
     my $self = shift;
     my $code;
     my ($dumpflag, $value) = @_;
-    my ($class, $type) = YAML::Base->node_info($value);
+    my ($class, $type) = YAML::Mo::Object->node_info($value);
     my $tag = "!perl/code";
     $tag .= ":$class" if defined $class;
     if (not $dumpflag) {
@@ -165,6 +172,7 @@ sub yaml_load {
 
 #-------------------------------------------------------------------------------
 package YAML::Type::ref;
+
 sub yaml_dump {
     my $self = shift;
     YAML::Node->new({(&YAML::VALUE, ${$_[0]})}, '!perl/ref')
@@ -180,6 +188,7 @@ sub yaml_load {
 
 #-------------------------------------------------------------------------------
 package YAML::Type::regexp;
+
 # XXX Be sure to handle blessed regexps (if possible)
 sub yaml_dump {
     die "YAML::Type::regexp::yaml_dump not currently implemented";
@@ -203,12 +212,14 @@ use constant _QR_TYPES => {
     msi => sub { qr{$_[0]}msi },
     msix => sub { qr{$_[0]}msix },
 };
+
 sub yaml_load {
     my $self = shift;
     my ($node, $class) = @_;
-    return qr{$node} unless $node =~ /^\(\?([\-xism]*):(.*)\)\z/s;
+    return qr{$node} unless $node =~ /^\(\?([\^\-xism]*):(.*)\)\z/s;
     my ($flags, $re) = ($1, $2);
     $flags =~ s/-.*//;
+    $flags =~ s/^\^//;
     my $sub = _QR_TYPES->{$flags} || sub { qr{$_[0]} };
     my $qr = &$sub($re);
     bless $qr, $class if length $class;
@@ -219,4 +230,4 @@ sub yaml_load {
 
 __END__
 
-#line 251
+#line 262

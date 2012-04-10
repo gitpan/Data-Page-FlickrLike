@@ -1,10 +1,16 @@
 #line 1
+use strict;
+use warnings;
 package YAML::Node;
-use strict; use warnings;
-use YAML::Base; use base 'YAML::Base';
-use YAML::Tag;
 
-our @EXPORT = qw(ynode);
+our $VERSION = '0.80';
+
+use YAML::Tag;
+require YAML::Mo;
+
+use Exporter;
+our @ISA     = qw(Exporter YAML::Mo::Object);
+our @EXPORT  = qw(ynode);
 
 sub ynode {
     my $self;
@@ -24,7 +30,7 @@ sub new {
     my ($class, $node, $tag) = @_;
     my $self;
     $self->{NODE} = $node;
-    my (undef, $type) = $class->node_info($node);
+    my (undef, $type) = YAML::Mo::Object->node_info($node);
     $self->{KIND} = (not defined $type) ? 'scalar' :
                     ($type eq 'ARRAY') ? 'sequence' :
 		    ($type eq 'HASH') ? 'mapping' :
@@ -63,6 +69,7 @@ sub keys {
 
 #==============================================================================
 package yaml_scalar;
+
 @yaml_scalar::ISA = qw(YAML::Node);
 
 sub new {
@@ -88,6 +95,7 @@ sub STORE {
 
 #==============================================================================
 package yaml_sequence;
+
 @yaml_sequence::ISA = qw(YAML::Node);
 
 sub new {
@@ -127,6 +135,7 @@ sub undone {
 
 #==============================================================================
 package yaml_mapping;
+
 @yaml_mapping::ISA = qw(YAML::Node);
 
 sub new {
@@ -211,4 +220,4 @@ sub EXISTS {
 
 __END__
 
-#line 297
+#line 306
